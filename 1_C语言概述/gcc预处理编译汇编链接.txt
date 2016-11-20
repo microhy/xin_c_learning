@@ -1,0 +1,62 @@
+﻿PS C:\Users\Micro> cat main.c
+#include<stdio.h>
+
+#define    N     10
+
+
+int main(int argc, char *argv[])
+{
+        int y=0;
+        y = N;
+        printf("y = N = %d\n",y);
+        printf("hello world!\n");
+        return 1;
+}
+PS C:\Users\Micro>
+PS C:\Users\Micro> gcc -E main.c -o main.i  预处理（替换常量）
+PS C:\Users\Micro> gcc -S main.i -o main.s  编译（转成汇编语言）
+PS C:\Users\Micro> cat main.s
+        .file   "main.c"
+        .def    __main; .scl    2;      .type   32;     .endef
+        .section .rdata,"dr"
+.LC0:
+        .ascii "y = N = %d\12\0"
+.LC1:
+        .ascii "hello world!\0"
+        .text
+        .globl  main
+        .def    main;   .scl    2;      .type   32;     .endef
+        .seh_proc       main
+main:
+        pushq   %rbp
+        .seh_pushreg    %rbp
+        movq    %rsp, %rbp
+        .seh_setframe   %rbp, 0
+        subq    $48, %rsp
+        .seh_stackalloc 48
+        .seh_endprologue
+        movl    %ecx, 16(%rbp)
+        movq    %rdx, 24(%rbp)
+        call    __main
+        movl    $0, -4(%rbp)
+        movl    $10, -4(%rbp)
+        movl    -4(%rbp), %eax
+        movl    %eax, %edx
+        leaq    .LC0(%rip), %rcx
+        call    printf
+        leaq    .LC1(%rip), %rcx
+        call    puts
+        movl    $1, %eax
+        addq    $48, %rsp
+        popq    %rbp
+        ret
+        .seh_endproc
+        .ident  "GCC: (tdm64-1) 4.9.2"
+        .def    printf; .scl    2;      .type   32;     .endef
+        .def    puts;   .scl    2;      .type   32;     .endef
+PS C:\Users\Micro>gcc -c main.s -o main.o   汇编阶段（将汇编语言翻译成机器码,二进制指令码 obj）
+PS C:\Users\Micro> gcc main.o -o main (链接阶段--链接库文件等，生成可执行文件exe)
+PS C:\Users\Micro> ./main
+y = N = 10
+hello world!
+PS C:\Users\Micro>
